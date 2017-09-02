@@ -9,16 +9,16 @@ class UserForm(forms.ModelForm):
 
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-    vpassword = forms.CharField(widget=forms.PasswordInput)
+    confirmPassword = forms.CharField(widget=forms.PasswordInput)
     email = forms.EmailField()
 
     def clean(self):
         password = self.cleaned_data.get('password')
-        vpassword = self.cleaned_data.get('vpassword')
+        confirmPassword = self.cleaned_data.get('confirmPassword')
         email = self.cleaned_data.get('email')
         username = self.cleaned_data.get('username')
 
-        if str(password) != str(vpassword) and password and vpassword:
+        if str(password) != str(confirmPassword) and password and confirmPassword:
             raise forms.ValidationError('The passwords do not match.')
 
         try:
