@@ -14,18 +14,25 @@
 
     {% block navbar %}
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="">MyContactManager</a>
+        <a class="navbar-brand" href="{% url 'organizeme:home'%}">Organ.Ize Me</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown" >
           <ul class="navbar-nav">
+            {% if not is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="">Login </a>
+              <a class="nav-link" href="{% url 'organizeme:login'%}">Login </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="">Register</a>
+              <a class="nav-link" href="{% url 'organizeme:register'%}">Register</a>
             </li>
+            {% endif %}
+            {% if is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'organizeme:logout'%}">Logout</a>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </nav>
