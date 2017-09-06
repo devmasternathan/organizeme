@@ -2,12 +2,14 @@
 {% load staticfiles %}
 {% load static %}
 
+
 {% block body%}
 <div class="container-fluid text-center">
+  <br>
   <h1> My Contact Manager </h1>
   <p> A simple way to manage your contacts. You can login in or register to
       manage your contacts. You can also press the button below
       test out the application.</p>
-  <a href="{% url 'organizeme:demo'%}" class="btn btn-secondary">Try A Demo</a>
+  <a href="{% url 'organizeme:demo' 1 %}" class="btn btn-secondary">Try A Demo</a>
 </div>
 {% endblock%}

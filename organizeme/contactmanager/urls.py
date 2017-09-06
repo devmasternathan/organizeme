@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^login/$', views.LoginFormView.as_view(), name='login'),
     url(r'^register/$', views.UserFormView.as_view(), name='register'),
     url(r'^manager/$', views.manager_view, name='manager'),
-    url(r'^demo/$', views.demo_view, name='demo'),
-    url(r'^logout/$', views.logout_view, name='logout')
+    url(r'^demo/(?P<slug>[-\w]+)/$', views.ContactFormView.as_view(), name='demo'),
+    url(r'^logout/$', views.logout_view, name='logout'),
+    url(r'^edit/(?P<slug>[-\w]+)/$', views.EditFormView.as_view(), name='edit'),
+    url(r'^remove/(?P<id>[-\w]+)/$', views.remove_view, name='remove')
 ]

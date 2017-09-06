@@ -1,0 +1,57 @@
+{% extends 'template.html' %}
+{% load staticfiles %}
+{% load static %}
+
+{% block body%}
+<div class="container-fluid text-center">
+  <div class="row">
+    {% if exist %}
+    <div class="col-md-6">
+      <div class="col-md-5" id="centered">
+        <br>
+        <h1> Edit List Item </h1>
+        <br>
+        <form action="" method="post"  enctype="multipart/form-data">
+          {{form.as_table}}
+          {% csrf_token %}
+          <br>
+          <input type="submit" name="" value="Edit" class="btn btn-secondary">
+        </form>
+      </div>
+    </div>
+    <div class = "col-md-1" style="border-left: thick solid grey;">
+
+    </div>
+    <div class="col-md-4">
+      <div id="centered">
+        <br>
+        {% if list_item.image %}
+          <img src="{{ list_item.image.url }}"
+          class="rounded mx-auto d-block"
+          alt="profile picture"
+          width=300
+          height=300>
+        {% else %}
+          <img src="http://image.shutterstock.com/z/stock-vector-no-user-profile-picture-hand-drawn-99335579.jpg"
+          class="rounded mx-auto d-block"
+          alt="profile picture"
+          width=300
+          height=300>
+        {% endif %}
+        <br>
+        <pre>
+        Name : {{list_item.name}}
+        Email : {{list_item.email}}
+        Email Type : {{list_item.email_type}}
+        Address : {{list_item.address}}
+        Phone Number: {{list_item.phone_number}}
+        Phone Type: {{list_item.phone_type}}
+        </pre>
+    </div>
+    </div>
+    {% else %}
+      <p>This item doesn't exist</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock%}

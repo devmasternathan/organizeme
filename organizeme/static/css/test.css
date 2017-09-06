@@ -1,0 +1,27 @@
+#centered{
+  margin: auto;
+  max-width: 300px;
+}
+
+#hidden_scroll{
+  overflow-y: scroll;
+  height:520px;
+  overflow: hidden;
+}
+
+#black_font_color{
+  color:black;
+}
+
+#black_divider{
+  border-left: thick solid grey;
+}
+
+#padding_left_five{
+  padding-left:5em;
+}
+
+#center{
+  float: none;
+  margin: 0 auto;
+}
