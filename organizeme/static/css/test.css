@@ -5,8 +5,9 @@
 
 #hidden_scroll{
   overflow-y: scroll;
-  height:520px;
+  height: 520px;
   overflow: hidden;
+  -ms-overflow-style: none;
 }
 
 #black_font_color{
@@ -24,4 +25,8 @@
 #center{
   float: none;
   margin: 0 auto;
+}
+
+body{
+  padding-bottom: 1rem;
 }
