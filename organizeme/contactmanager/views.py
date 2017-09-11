@@ -4,13 +4,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render, render_to_response
 from django.template import RequestContext
 from django.views.generic import FormView, View
 from django.db.models import Q
 from .forms import ContactForm, EditForm, LoginForm, UserForm
+from lazysignup.decorators import allow_lazy_user
 from .models import Contact
+
 # Create your views here.
 
 def handler404(request):
@@ -43,14 +45,6 @@ def manager_view(request):
 		"is_authenticated": context.request.user.is_authenticated()
 	}
 
-	return render(context.request, 'manager.html', data)
-
-def demo_view(request):
-	context = RequestContext(request)
-
-	data ={
-		"is_authenticated": request.user.is_authenticated()
-	}
 	return render(context.request, 'manager.html', data)
 
 def remove_view(request, id):
@@ -297,3 +291,7 @@ class EditFormView(View):
 			"form": form
 			}
 		return render(request, self.template_name, data)
+
+@allow_lazy_user
+def demo_view(request, slug):
+	return redirect('organizeme:manager', slug=1)
