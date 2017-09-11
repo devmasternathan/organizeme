@@ -6,6 +6,10 @@
 {% block body%}
 <div class="container-fluid text-center">
   <br>
-  <h1> 505 Error </h1>
+  <h1> 500 Error </h1>
+  <p> <small>Sorry but something has gne wrong with the server. Please
+             attempt to press the button below to go to the homepage.</small></p>
+    <br>
+    <a href="{% url 'organizeme:home'%}" class="btn btn-secondary">Home</a>
 </div>
 {% endblock%}
