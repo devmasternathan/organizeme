@@ -24,7 +24,6 @@ SECRET_KEY = 'kpbb3+c2e!ijjxizhf+ffq-t@s8hl9#i=e7afy#u@nzlhhpjnd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -120,6 +119,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+handler404 = 'contactmanager.views.handler404'
 
 # create folder static to hold javacsript, css
 STATICFILES_DIRS = (

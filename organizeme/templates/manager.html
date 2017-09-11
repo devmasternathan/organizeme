@@ -29,10 +29,12 @@
                         <div class="media-left">
                           {% if contact.image %}
                             <img src="{{contact.image.url }}"
-                            class="img-circle" alt="contact image" width="50" height="50" style="border-radius: 50%;">
+                            class="img-circle" alt="contact image"
+                            width="50" height="50" style="border-radius: 50%;">
                           {% else %}
-                            <img src="http://image.shutterstock.com/z/stock-vector-no-user-profile-picture-hand-drawn-99335579.jpg"
-                            class="img-circle" alt="contact image" width="50" height="50" style="border-radius: 50%;">
+                            <img src="{% static 'static/profile.jpg' %}"
+                            class="img-circle" alt="contact image"
+                            width="50" height="50" style="border-radius: 50%;">
                           {% endif %}
                         </div>
                         <div class="media-body">
@@ -57,7 +59,9 @@
                       <ul class="pagination justify-content-center">
                         {% if list.has_previous %}
                         <li class="page-item">
-                          <a class="page-link" href="{% url 'organizeme:demo' list.previous_page_number %}" tabindex="-1">Previous</a>
+                          <a class="page-link"
+                          href="{% url 'organizeme:demo' list.previous_page_number %}"
+                          tabindex="-1">Previous</a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">

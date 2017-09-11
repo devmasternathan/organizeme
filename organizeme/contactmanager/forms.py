@@ -71,7 +71,7 @@ class LoginForm(forms.Form):
 
             if user:
                 return self.cleaned_data
-                
+
         except User.DoesNotExist:
             raise forms.ValidationError('You entered the wrong password and username combination.')
 

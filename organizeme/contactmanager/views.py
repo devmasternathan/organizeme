@@ -5,45 +5,67 @@ from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, render_to_response
 from django.template import RequestContext
 from django.views.generic import FormView, View
 from django.db.models import Q
 from .forms import ContactForm, EditForm, LoginForm, UserForm
 from .models import Contact
-
 # Create your views here.
+
+def handler404(request):
+    response = render_to_response('404.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+
+
+def handler500(request):
+    response = render_to_response('500.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
+
 def home_view(request):
-	 context ={
-		"is_authenticated": request.user.is_authenticated()
+	 context = RequestContext(request)
+	 data ={
+		"is_authenticated": context.request.user.is_authenticated()
 	 }
-	 return render(request, 'home.html', context)
+	 if data['is_authenticated']:
+		 return redirect('organizeme:manager', slug=1)
+	 else:
+	 	return render(context.request, 'home.html', data)
 
 def manager_view(request):
 	context = RequestContext(request)
-	context ={
-		"is_authenticated": request.user.is_authenticated()
+
+	data ={
+		"is_authenticated": context.request.user.is_authenticated()
 	}
-	return render(request, 'manager.html', context)
+
+	return render(context.request, 'manager.html', data)
 
 def demo_view(request):
-	context ={
+	context = RequestContext(request)
+
+	data ={
 		"is_authenticated": request.user.is_authenticated()
 	}
-	return render(request, 'manager.html', context)
+	return render(context.request, 'manager.html', data)
 
 def remove_view(request, id):
+	 context = RequestContext(request)
 	 err = None
 	 try:
 		 contact_item = Contact.objects.get(id=id)
 		 contact_item.delete()
 	 except ObjectDoesNotExist as error:
 		 err = "contact does not exist: {0}".format(error)
-	 context ={
-		"is_authenticated": request.user.is_authenticated(),
+	 data ={
+		"is_authenticated": context.request.user.is_authenticated(),
 		"error": err
 	 }
-	 return redirect('organizeme:demo', slug=1)
+	 return redirect('organizeme:manager', slug=1)
 
 def logout_view(request):
 	context = RequestContext(request)
@@ -56,16 +78,18 @@ class UserFormView(View):
 	template_name = "register.html"
 
 	def get(self, request):
+		context = RequestContext(request)
 		form = self.form_class(None)
-		context ={
-			"is_authenticated": request.user.is_authenticated(),
+		data ={
+			"is_authenticated": context.request.user.is_authenticated(),
 			'form':form,
 			"error": None
 		}
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 	def post(self, request):
-		form = self.form_class(request.POST)
+		context = RequestContext(request)
+		form = self.form_class(context.request.POST)
 		err = None
 
 		if form.is_valid():
@@ -79,26 +103,26 @@ class UserFormView(View):
 				user = authenticate(username=username, password= password)
 
 				if user is not None:
-					login(request, user)
-					return redirect('organizeme:manager')
+					login(context.request, user)
+					return redirect('organizeme:manager', slug=1)
 				else:
 					err = 'user could not be authenticated.'
 			except IntegrityError as e:
 				if 'unique constraint' in e.args[0]:
 					err += str(e.args) + ' '
-					context ={
-						"is_authenticated": request.user.is_authenticated(),
+					data ={
+						"is_authenticated": context.request.user.is_authenticated(),
 						'form':form,
 						"error": err
 					}
-					return render(request, self.template_name, context)
+					return render(context.request, self.template_name, data)
 
-		context ={
-			"is_authenticated": request.user.is_authenticated(),
+		data ={
+			"is_authenticated": context.request.user.is_authenticated(),
 			'form':form,
 			"error": err
 		}
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 class LoginFormView(View):
 	form_class = LoginForm
@@ -107,17 +131,19 @@ class LoginFormView(View):
 	# when user want this form get this
 	# display blank form
 	def get(self, request):
+		context = RequestContext(request)
 		form = self.form_class(None)
-		context ={
-			"is_authenticated": request.user.is_authenticated(),
+		data ={
+			"is_authenticated": context.request.user.is_authenticated(),
 			'form':form,
 			'error': None
 		}
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 	# process form data
 	def post(self, request):
-		form = self.form_class(request.POST)
+		context = RequestContext(request)
+		form = self.form_class(context.request.POST)
 		err = None
 
 		if form.is_valid():
@@ -127,31 +153,33 @@ class LoginFormView(View):
 			user = authenticate(username=username, password= password)
 
 			if user is not None:
-				login(request, user)
-				return redirect('organizeme:manager')
+				login(context.request, user)
+				return redirect('organizeme:manager', slug=1)
 			else:
 				err = "Error: Your account could not be found. \
 				Try again or contact us via 1-111-1111"
 
-		context ={
-			"is_authenticated": request.user.is_authenticated(),
+		data ={
+			"is_authenticated": context.request.user.is_authenticated(),
 			'form':form,
 			'error': err
 		}
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 class ContactFormView(View):
 	form_class = ContactForm
 	template_name = "manager.html"
 
 	def get(self, request, slug):
+		context = RequestContext(request)
 		form = self.form_class(None)
-		page = request.GET.get('page', 1)
-		query = request.GET.get('query')
+		page = context.request.GET.get('page', 1)
+		query = context.request.GET.get('query')
+		id = context.request.user.id
 		err = None
 
 		if query:
-			contact_list =  Contact.objects.filter(
+			contact_list =  Contact.objects.filter(user_id = id).filter(
 				Q(name__icontains=query) |
 				Q(email__icontains=query) |
 				Q(address__icontains=query) |
@@ -162,7 +190,7 @@ class ContactFormView(View):
 		else:
 			err = "This query produced no results. Please try another \
 			word or clear the input and press enter to get all your contacts."
-			contact_list = Contact.objects.all().order_by('name')
+			contact_list = Contact.objects.filter(user_id=id).order_by('name')
 
 		if page == 1:
 			if slug is not None:
@@ -179,56 +207,60 @@ class ContactFormView(View):
 			err = "contact does not exist: {0}".format(error)
 			contact_list = paginator.page(paginator.num_pages)
 
-		context ={
-			'is_authenticated': request.user.is_authenticated(),
+		data ={
+			'is_authenticated': context.request.user.is_authenticated(),
 			'form': form,
 			'list': contact_list,
 			'error' : err
 		}
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 	def post(self, request, slug):
-		form = self.form_class(request.POST, request.FILES or None)
+		context = RequestContext(request)
+		form = self.form_class(context.request.POST, context.request.FILES or None)
 		err = None
 
 		if form.is_valid():
 			contact = form.save(commit=False)
+			contact.user = context.request.user
 			contact.save()
 		else:
 			err = 'error :  form submission failed. Please re-enter.'
 
-		contact_list = Contact.objects.all().order_by('name')
+		contact_list = Contact.objects.filter(user_id=context.request.user.id).order_by('name')
 		paginator = Paginator(contact_list, 7)
 		contact_list = paginator.page(1)
 
-		context ={
-			"is_authenticated": request.user.is_authenticated(),
+		data ={
+			"is_authenticated": context.request.user.is_authenticated(),
 			'form':form,
 			'list': contact_list,
 			'error': err
 		}
 
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 class EditFormView(View):
 	form_class = EditForm
 	template_name= "edit.html"
 
 	def get(self, request, slug):
+		context = RequestContext(request)
 		form = self.form_class(None)
 		exist = True
 		contact_item = Contact.objects.get(id=slug)
 
-		context ={
-		"is_authenticated": request.user.is_authenticated(),
+		data ={
+		"is_authenticated": context.request.user.is_authenticated(),
 		"list_item": contact_item,
 		"exist": exist,
 		"form": form
 		}
-		return render(request, self.template_name, context)
+		return render(context.request, self.template_name, data)
 
 	def post(self, request, slug):
-		form = self.form_class(request.POST, request.FILES or None)
+		context = RequestContext(request)
+		form = self.form_class(context.request.POST, context.request.FILES or None)
 
 		if form.is_valid():
 			contact = form.save(commit=False)
@@ -257,6 +289,11 @@ class EditFormView(View):
 				contact_item.image = image
 
 			contact_item.save()
-			return redirect('organizeme:demo', slug=1)
-
-		return render(request, self.template_name, context)
+			return redirect('organizeme:manager', slug=1)
+			data ={
+			"is_authenticated": context.request.user.is_authenticated(),
+			"list_item": contact_item,
+			"exist": exist,
+			"form": form
+			}
+		return render(request, self.template_name, data)

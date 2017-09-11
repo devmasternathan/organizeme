@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 class Contact(models.Model):
 
@@ -13,6 +13,7 @@ class Contact(models.Model):
     phone_number = models.CharField(max_length=19)
     phone_type = models.CharField(max_length=4, choices=LOCATION_CHOICES, default="HOME")
     image = models.ImageField(upload_to='contactPictures', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'contact'
